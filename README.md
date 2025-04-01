@@ -1,1 +1,2 @@
-# GitHub-Analytics-Platform
+# Github Analytics Platform
+ DEC + Software Patterns Package
