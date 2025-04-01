@@ -83,7 +83,7 @@ def format_issue_table(table, issues):
 
 def main():
     """Generate a SonarCloud report in a Word document"""
-    with open("paste.json", "r", encoding="utf-8") as file:
+    with open("paste1.json", "r", encoding="utf-8") as file:
         data = json.load(file)
     
     issues = data.get('issues', [])
