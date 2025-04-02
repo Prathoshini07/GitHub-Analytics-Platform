@@ -61,6 +61,16 @@ function Insights() {
     }
   };
 
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
+  const handleKeyPress = (event, path) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      navigate(path);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background p-6 w-full dark">
       <h1 className="text-3xl text-foreground mb-12 font text-left">Insights for {username}</h1>
@@ -112,18 +122,24 @@ function Insights() {
             </CardContent>
           </Card>
           <div className="mt-6 flex justify-center space-x-6">
-            <span
-              onClick={() => navigate(`/commits/${username}`)}
-              className="text-muted-foreground hover:text-primary cursor-pointer animate-pulse"
+            <button
+              onClick={() => handleNavigation(`/commits/${username}`)}
+              onKeyDown={(event) => handleKeyPress(event, `/commits/${username}`)}
+              role="button"
+              tabIndex="0"
+              className="text-muted-foreground hover:text-primary cursor-pointer animate-pulse bg-transparent border-none p-0"
             >
               Commits Dashboard
-            </span>
-            <span
-              onClick={() => navigate(`/top-repos/${username}`)}
-              className="text-muted-foreground hover:text-primary cursor-pointer animate-pulse"
+            </button>
+            <button
+              onClick={() => handleNavigation(`/top-repos/${username}`)}
+              onKeyDown={(event) => handleKeyPress(event, `/top-repos/${username}`)}
+              role="button"
+              tabIndex="0"
+              className="text-muted-foreground hover:text-primary cursor-pointer animate-pulse bg-transparent border-none p-0"
             >
               Explore Top Repos
-            </span>
+            </button>
           </div>
         </>
       ) : (

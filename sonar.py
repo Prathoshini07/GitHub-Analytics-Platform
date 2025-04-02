@@ -14,32 +14,30 @@ def add_page_number(paragraph):
     paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     run = paragraph.add_run()
     
-    fldChar = OxmlElement('w:fldChar')
-    fldChar.set(qn('w:fldCharType'), 'begin')
-    run._element.append(fldChar)
+    fld_char = OxmlElement('w:fldChar')
+    fld_char.set(qn('w:fldCharType'), 'begin')
+    run._element.append(fld_char)
 
-    instrText = OxmlElement('w:instrText')
-    instrText.set(qn('xml:space'), 'preserve')
-    instrText.text = "PAGE"
-    run._element.append(instrText)
+    instr_text = OxmlElement('w:instrText')
+    instr_text.set(qn('xml:space'), 'preserve')
+    instr_text.text = "PAGE"
+    run._element.append(instr_text)
 
-    fldChar = OxmlElement('w:fldChar')
-    fldChar.set(qn('w:fldCharType'), 'end')
-    run._element.append(fldChar)
+    fld_char = OxmlElement('w:fldChar')
+    fld_char.set(qn('w:fldCharType'), 'end')
+    run._element.append(fld_char)
 
 def categorize_issues(issues):
     """Categorize issues by type, severity, and component"""
     by_type = defaultdict(list)
     by_severity = defaultdict(list)
-    by_component = defaultdict(list)
+    _ = defaultdict(list)  # Unused variable replaced with _
     
     for issue in issues:
         by_type[issue['type']].append(issue)
         by_severity[issue['severity']].append(issue)
-        component = issue['component'].split(':', 1)[1] if ':' in issue['component'] else issue['component']
-        by_component[component].append(issue)
     
-    return by_type, by_severity, by_component
+    return by_type, by_severity
 
 def get_severity_color(severity):
     """Return RGB color based on severity"""
@@ -65,8 +63,7 @@ def format_issue_table(table, issues):
     
     for row_idx, issue in enumerate(issues, start=1):
         row = table.add_row()
-        component = issue['component'].split(':', 1)[1] if ':' in issue['component'] else issue['component']
-        file_name = component.split('/')[-1] if '/' in component else component
+        file_name = issue['component'].split('/')[-1] if '/' in issue['component'] else issue['component']
 
         issue_data = [
             issue['key'], issue['type'], issue['severity'], file_name,
@@ -113,7 +110,7 @@ def main():
         ("Technical Debt", f"{data['debtTotal']} mins")
     ]
     
-    by_type, by_severity, by_component = categorize_issues(issues)
+    by_type, by_severity = categorize_issues(issues)
 
     for severity in ["BLOCKER", "CRITICAL", "MAJOR", "MINOR", "INFO"]:
         if severity in by_severity:
