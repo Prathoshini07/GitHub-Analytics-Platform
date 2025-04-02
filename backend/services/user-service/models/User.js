@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
     {
-        githubId: { type: String, required: true, unique: true }, // GitHub User ID
-        username: { type: String, required: true, unique: true }, // GitHub Username
-        name: { type: String, required: true }, // Full name of the user
-        email: { type: String, required: false}, // User's email
-        avatarUrl: { type: String, required: true }, // URL to the user's avatar/profile picture
-        bio: { type: String }, // User's bio/description
-        createdAt: { type: Date, default: Date.now }, // Timestamp of when the user was created
+        githubId: { type: String, required: true, unique: true },
+        username: { type: String, required: true, unique: true }, 
+        name: { type: String, required: true }, 
+        email: { type: String, required: false},
+        avatarUrl: { type: String, required: true }, 
+        bio: { type: String }, 
+        createdAt: { type: Date, default: Date.now },
     },
-    { timestamps: true, collection: "users" } // Adds `createdAt` and `updatedAt` fields automatically
+    { timestamps: true, collection: "users" } 
 );
 
 const User = mongoose.model("User", userSchema);

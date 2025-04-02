@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const pullRequestSchema = new mongoose.Schema(
   {
-    prId: { type: String, required: true, unique: true }, // GitHub PR ID
-    number: { type: Number, required: true }, // PR number in repo
-    repository: { type: String, required: true }, // Repo ID
-    author: { type: String, required: true }, // User’s GitHub ID
+    prId: { type: String, required: true, unique: true },
+    number: { type: Number, required: true }, 
+    repository: { type: String, required: true }, 
+    author: { type: String, required: true }, 
     title: { type: String, required: true },
-    state: { type: String, required: true }, // "open", "closed", "merged"
+    state: { type: String, required: true }, 
     createdAt: { type: Date, required: true },
     updatedAt: { type: Date },
     closedAt: { type: Date },

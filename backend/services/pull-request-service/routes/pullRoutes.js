@@ -24,7 +24,7 @@ router.post("/sync/:username", async (req, res) => {
     console.log(`Starting PR sync for ${username}`);
     const userResponse = await githubApi.get(`/users/${username}`);
     const userGithubId = userResponse.data.id.toString();
-    console.log(`User GitHub ID: ${userGithubId}`); // Debug user ID
+    console.log(`User GitHub ID: ${userGithubId}`); 
 
     let allRepos = [];
     let page = 1;
@@ -44,7 +44,7 @@ router.post("/sync/:username", async (req, res) => {
     for (const repo of allRepos) {
       const repoId = repo.id.toString();
       let prPage = 1;
-      let repoPRsSynced = 0; // Track PRs per repo
+      let repoPRsSynced = 0;
 
       while (true) {
         try {
@@ -96,7 +96,6 @@ router.post("/sync/:username", async (req, res) => {
       }
     }
 
-    // Verify DB count
     const dbTotal = await PullRequest.countDocuments({ author: userGithubId });
     console.log(`Finished syncing ${totalPRsSynced} PRs for ${username} (DB Total: ${dbTotal})`);
     res.json({ message: `Synced ${totalPRsSynced} PRs`, totalPRs: totalPRsSynced });

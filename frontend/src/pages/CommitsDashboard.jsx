@@ -13,7 +13,6 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
-// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function CommitsDashboard() {
@@ -26,17 +25,16 @@ function CommitsDashboard() {
   useEffect(() => {
     const fetchCommits = async () => {
       try {
-        const response = await getCommits(username, 1, 1000); // Fetch up to 1000 commits
+        const response = await getCommits(username, 1, 1000); 
         console.log("Commits Response:", response.data);
         setCommits(response.data.commits);
         setTotalCommits(response.data.totalCommits);
 
-        // Process commits for chart
         const commitDates = response.data.commits.reduce((acc, commit) => {
           const date = new Date(commit.date).toLocaleDateString('en-US', {
             month: 'short',
             year: 'numeric',
-          }); // e.g., "Mar 2025"
+          });
           acc[date] = (acc[date] || 0) + 1;
           return acc;
         }, {});
@@ -50,8 +48,8 @@ function CommitsDashboard() {
             {
               label: 'Commits Over Time',
               data,
-              borderColor: '#5a329f', // Darker GitHub purple
-              backgroundColor: 'rgba(90, 50, 159, 0.2)', // Purple fill with opacity
+              borderColor: '#5a329f',
+              backgroundColor: 'rgba(90, 50, 159, 0.2)', 
               tension: 0.1,
             },
           ],
@@ -69,15 +67,15 @@ function CommitsDashboard() {
     plugins: {
       legend: {
         position: 'top',
-        labels: { color: '#e5e5e5' }, // White legend text
+        labels: { color: '#e5e5e5' }, 
       },
       title: {
         display: true,
         text: `Commit Activity for ${username}`,
-        color: '#e5e5e5', // White title
+        color: '#e5e5e5', 
       },
       tooltip: {
-        backgroundColor: 'rgba(32, 32, 32, 0.8)', // Dark tooltip
+        backgroundColor: 'rgba(32, 32, 32, 0.8)', 
         titleColor: '#e5e5e5',
         bodyColor: '#e5e5e5',
       },
@@ -85,8 +83,8 @@ function CommitsDashboard() {
     scales: {
       x: {
         title: { display: true, text: 'Date', color: '#e5e5e5' },
-        ticks: { color: '#e5e5e5' }, // White ticks
-        grid: { color: 'rgba(255, 255, 255, 0.1)' }, // Subtle white grid
+        ticks: { color: '#e5e5e5' }, 
+        grid: { color: 'rgba(255, 255, 255, 0.1)' }, 
       },
       y: {
         title: { display: true, text: 'Number of Commits', color: '#e5e5e5' },

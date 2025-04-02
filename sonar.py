@@ -9,7 +9,7 @@ from collections import defaultdict
 def add_page_number(paragraph):
     """Add page numbers in the footer safely"""
     if not paragraph:
-        return  # Ensure paragraph exists before modifying
+        return  
 
     paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     run = paragraph.add_run()
@@ -44,13 +44,13 @@ def categorize_issues(issues):
 def get_severity_color(severity):
     """Return RGB color based on severity"""
     colors = {
-        "BLOCKER": RGBColor(192, 0, 0),  # Dark Red
-        "CRITICAL": RGBColor(255, 0, 0),  # Red
-        "MAJOR": RGBColor(255, 127, 0),  # Orange
-        "MINOR": RGBColor(255, 201, 14),  # Yellow
-        "INFO": RGBColor(0, 0, 255)  # Blue
+        "BLOCKER": RGBColor(192, 0, 0), 
+        "CRITICAL": RGBColor(255, 0, 0), 
+        "MAJOR": RGBColor(255, 127, 0), 
+        "MINOR": RGBColor(255, 201, 14), 
+        "INFO": RGBColor(0, 0, 255) 
     }
-    return colors.get(severity, RGBColor(0, 0, 0))  # Default to black
+    return colors.get(severity, RGBColor(0, 0, 0))  
 
 def format_issue_table(table, issues):
     """Format the issue table with standardized styling"""
@@ -76,14 +76,14 @@ def format_issue_table(table, issues):
         for col_idx, data in enumerate(issue_data):
             cell = row.cells[col_idx]
             cell.text = data
-            if col_idx == 2:  # Severity column
+            if col_idx == 2: 
                 run = cell.paragraphs[0].runs[0]
                 run.font.color.rgb = get_severity_color(issue['severity'])
                 run.bold = True
 
 def main():
     """Generate a SonarCloud report in a Word document"""
-    with open("paste1.json", "r", encoding="utf-8") as file:
+    with open("paste3.json", "r", encoding="utf-8") as file:
         data = json.load(file)
     
     issues = data.get('issues', [])

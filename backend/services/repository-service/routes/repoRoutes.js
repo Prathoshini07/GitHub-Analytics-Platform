@@ -10,7 +10,6 @@ const githubApi = axios.create({
   headers: GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {},
 });
 
-// Get all repositories
 router.get("/", async (req, res) => {
   try {
     const repos = await Repository.find();
@@ -22,7 +21,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get and sync ALL repositories for a specific user
 router.get("/:username", async (req, res) => {
   try {
     const { username } = req.params;
@@ -65,15 +63,14 @@ router.get("/:username", async (req, res) => {
 
     const upsertPromises = allGithubRepos.map(async (repoData) => {
       return Repository.findOneAndUpdate(
-        { githubId: repoData.githubId }, // Find by githubId
-        repoData,                        // Update with GitHub data
-        { upsert: true, new: true,sanitizeFilter: true  }      // Insert if not found, return updated doc
+        { githubId: repoData.githubId }, 
+        repoData,                     
+        { upsert: true, new: true,sanitizeFilter: true  }      
       );
     });
     await Promise.all(upsertPromises);
     console.log(`Synced ${allGithubRepos.length} repos for ${username} into DB`);
 
-    // Fetch the updated list from DB
     const dbRepos = await Repository.find({ owner: username });
     res.json(dbRepos);
   } catch (err) {

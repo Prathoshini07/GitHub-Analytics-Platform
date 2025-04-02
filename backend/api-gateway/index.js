@@ -1,24 +1,20 @@
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const cors = require("cors");
-const client = require("prom-client"); // Add this
+const client = require("prom-client"); 
 
 const app = express();
 app.use(cors({ origin: "http://localhost:5173" }));
 
 const PORT = 5000;
-
-// Collect default metrics (CPU, memory, etc.)
 client.collectDefaultMetrics();
 
-// Custom metric: HTTP requests counter
 const httpRequestsTotal = new client.Counter({
   name: 'http_requests_total',
   help: 'Total number of HTTP requests',
   labelNames: ['route', 'status'],
 });
 
-// Middleware to track requests
 app.use((req, res, next) => {
   console.log(`Incoming Request: ${req.method} ${req.url}`);
   res.on('finish', () => {
@@ -27,13 +23,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Metrics endpoint for Prometheus
 app.get('/metrics', async (req, res) => {
   res.set('Content-Type', client.register.contentType);
   res.end(await client.register.metrics());
 });
 
-// Users Service Proxy
 app.use(
   "/users",
   (req, res, next) => {
@@ -60,7 +54,6 @@ app.use(
   })
 );
 
-// Repos Service Proxy
 app.use(
   "/repos",
   (req, res, next) => {
@@ -90,7 +83,6 @@ app.use(
   })
 );
 
-// Commits Service Proxy
 app.use(
   "/commits",
   (req, res, next) => {
@@ -117,7 +109,6 @@ app.use(
   })
 );
 
-// PRs Service Proxy
 app.use(
   "/prs",
   (req, res, next) => {
