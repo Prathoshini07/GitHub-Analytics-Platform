@@ -15,59 +15,48 @@ function Insights() {
   const [syncingPRs, setSyncingPRs] = useState(false);
   const navigate = useNavigate();
 
-  const fetchData = async () => {
-    try {
-      const [userResponse, reposResponse, commitsResponse, prsResponse] = await Promise.all([
-        getUser(username),
-        getRepos(username),
-        getCommitsTotal(username),
-        getPRsTotal(username),
-      ]);
-      setUser(userResponse.data || {});
-      setRepos(reposResponse.data || []);
-      setTotalCommits(commitsResponse.data?.totalCommits || 0);
-      setTotalPRs(prsResponse.data?.totalPRs || 0);
-    } catch (err) {
-      console.error("Fetch Error:", err);
-      setError(err.message || "Failed to load data");
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [userResponse, reposResponse, commitsResponse, prsResponse] = await Promise.all([
+          getUser(username),
+          getRepos(username),
+          getCommitsTotal(username),
+          getPRsTotal(username),
+        ]);
+        setUser(userResponse.data || {});
+        setRepos(reposResponse.data || []);
+        setTotalCommits(commitsResponse.data?.totalCommits || 0);
+        setTotalPRs(prsResponse.data?.totalPRs || 0);
+      } catch (err) {
+        console.error("Fetch Error:", err);
+        setError(err.message || "Failed to load data");
+      }
+    };
     fetchData();
   }, [username]);
 
-  const handleSyncCommits = async () => {
-    setSyncingCommits(true);
-    try {
-      const syncResponse = await syncCommits(username);
-      setTotalCommits(syncResponse.data.totalCommits || totalCommits);
-    } catch (err) {
-      setError(err.message || "Failed to sync commits");
-    } finally {
-      setSyncingCommits(false);
+  const handleSync = async (type) => {
+    if (type === 'commits') {
+      setSyncingCommits(true);
+    } else {
+      setSyncingPRs(true);
     }
-  };
-
-  const handleSyncPRs = async () => {
-    setSyncingPRs(true);
     try {
-      const syncResponse = await syncPRs(username);
-      setTotalPRs(syncResponse.data.totalPRs || totalPRs);
+      const syncResponse = type === 'commits' ? await syncCommits(username) : await syncPRs(username);
+      if (type === 'commits') {
+        setTotalCommits(syncResponse.data.totalCommits || totalCommits);
+      } else {
+        setTotalPRs(syncResponse.data.totalPRs || totalPRs);
+      }
     } catch (err) {
-      setError(err.message || "Failed to sync PRs");
+      setError(err.message || `Failed to sync ${type}`);
     } finally {
-      setSyncingPRs(false);
-    }
-  };
-
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
-
-  const handleKeyPress = (event, path) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      navigate(path);
+      if (type === 'commits') {
+        setSyncingCommits(false);
+      } else {
+        setSyncingPRs(false);
+      }
     }
   };
 
@@ -98,11 +87,7 @@ function Insights() {
                   <p className="text-muted-foreground">
                     Commits: {totalCommits !== null ? totalCommits : 'Loading...'}
                   </p>
-                  <Button
-                    onClick={handleSyncCommits}
-                    disabled={syncingCommits}
-                    className="bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-[#4a2885] disabled:bg-muted"
-                  >
+                  <Button onClick={() => handleSync('commits')} disabled={syncingCommits}>
                     {syncingCommits ? 'Syncing...' : 'Sync Commits'}
                   </Button>
                 </div>
@@ -110,11 +95,7 @@ function Insights() {
                   <p className="text-muted-foreground">
                     PRs: {totalPRs !== null ? totalPRs : 'Loading...'}
                   </p>
-                  <Button
-                    onClick={handleSyncPRs}
-                    disabled={syncingPRs}
-                    className="bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-[#4a2885] disabled:bg-muted"
-                  >
+                  <Button onClick={() => handleSync('prs')} disabled={syncingPRs}>
                     {syncingPRs ? 'Syncing...' : 'Sync PRs'}
                   </Button>
                 </div>
@@ -122,24 +103,8 @@ function Insights() {
             </CardContent>
           </Card>
           <div className="mt-6 flex justify-center space-x-6">
-            <button
-              onClick={() => handleNavigation(`/commits/${username}`)}
-              onKeyDown={(event) => handleKeyPress(event, `/commits/${username}`)}
-              role="button"
-              tabIndex="0"
-              className="text-muted-foreground hover:text-primary cursor-pointer animate-pulse bg-transparent border-none p-0"
-            >
-              Commits Dashboard
-            </button>
-            <button
-              onClick={() => handleNavigation(`/top-repos/${username}`)}
-              onKeyDown={(event) => handleKeyPress(event, `/top-repos/${username}`)}
-              role="button"
-              tabIndex="0"
-              className="text-muted-foreground hover:text-primary cursor-pointer animate-pulse bg-transparent border-none p-0"
-            >
-              Explore Top Repos
-            </button>
+            <Button onClick={() => navigate(`/commits/${username}`)}>Commits Dashboard</Button>
+            <Button onClick={() => navigate(`/top-repos/${username}`)}>Explore Top Repos</Button>
           </div>
         </>
       ) : (
