@@ -84,11 +84,18 @@ router.post("/", async (req, res) => {
     const repoData = req.body;
     const { githubId } = repoData;
 
+    // Validate githubId to prevent NoSQL injection
+    if (!githubId || typeof githubId !== "string" || githubId.trim() === "") {
+      return res.status(400).json({ error: "Invalid githubId" });
+    }
+
+    // Secure findOneAndUpdate using $eq to prevent NoSQL injection
     const repo = await Repository.findOneAndUpdate(
-      { githubId },
+      { githubId: { $eq: githubId } },
       repoData,
       { upsert: true, new: true }
     );
+
     console.log("Saved/Updated Repo:", repo);
     res.status(201).json(repo);
   } catch (err) {
@@ -96,5 +103,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = router;
