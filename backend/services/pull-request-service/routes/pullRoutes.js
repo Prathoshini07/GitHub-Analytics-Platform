@@ -50,6 +50,13 @@ const fetchRepoPullRequests = async (username, repoName, userGithubId) => {
   return allPRs;
 };
 
+// Extracted Function to Determine PR State
+const determinePRState = (pr) => {
+  if (pr.state === "open") return "open";
+  if (pr.merged_at) return "merged";
+  return "closed";
+};
+
 const processPullRequests = async (prsPage, repoId, userGithubId) => {
   const prUpdates = prsPage.map(pr => ({
     updateOne: {
@@ -61,7 +68,7 @@ const processPullRequests = async (prsPage, repoId, userGithubId) => {
           repository: repoId,
           author: userGithubId,
           title: pr.title,
-          state: pr.state === "open" ? "open" : pr.merged_at ? "merged" : "closed",
+          state: determinePRState(pr),  // Using Extracted Function
           createdAt: new Date(pr.created_at),
           updatedAt: pr.updated_at ? new Date(pr.updated_at) : null,
           closedAt: pr.closed_at ? new Date(pr.closed_at) : null,

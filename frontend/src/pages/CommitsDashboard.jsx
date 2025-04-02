@@ -17,7 +17,6 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 function CommitsDashboard() {
   const { username } = useParams();
-  const [commits, setCommits] = useState([]);
   const [totalCommits, setTotalCommits] = useState(0);
   const [error, setError] = useState(null);
   const [chartData, setChartData] = useState(null);
@@ -27,7 +26,7 @@ function CommitsDashboard() {
       try {
         const response = await getCommits(username, 1, 1000); 
         console.log("Commits Response:", response.data);
-        setCommits(response.data.commits);
+
         setTotalCommits(response.data.totalCommits);
 
         const commitDates = response.data.commits.reduce((acc, commit) => {
